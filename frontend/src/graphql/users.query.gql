@@ -1,0 +1,41 @@
+fragment User on UserModel {
+  id
+  name
+  email
+}
+
+query UserPage {
+  user {
+    ...User
+  }
+}
+
+mutation LoginUser($email: String!, $password: String!) {
+  login(loginUserInput: {email: $email, password: $password}) {
+    access_token
+    refresh_token
+    user {
+      ...User
+    }
+  }
+}
+
+mutation CreateUser($name: String!, $email: String!, $password: String!) {
+  createUser(input: { name: $name, email: $email, password: $password }) {
+    ...User
+  }
+}
+
+mutation RefreshToken {
+  refreshToken {
+    user {
+      ...User
+    }
+    access_token
+    refresh_token
+  }
+}
+
+mutation LogoutUser {
+  logout
+}

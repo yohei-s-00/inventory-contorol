@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator nestgraphql {
+  provider = "node node_modules/prisma-nestjs-graphql"
+  output = "../src/@generated/prisma-nestjs-graphql"
+  fields_Validator_from = "class-validator"
+  fields_Validator_input = true
+  decorate_1_type        = "CreateOne*Args"
+  decorate_1_field       = data
+  decorate_1_name        = ValidateNested
+  decorate_1_from        = "class-validator"
+  decorate_1_arguments   = "[]"
+  decorate_2_type        = "CreateOne*Args"
+  decorate_2_field       = data
+  decorate_2_from        = "class-transformer"
+  decorate_2_arguments   = "['() => {propertyType.0}']"
+  decorate_2_name        = Type
+}
+
+model User {
+  /// @Field(() => ID)
+  id              Int @id @default(autoincrement())
+  /// @Validator.IsNotEmpty()
+  name            String 
+  /// @Validator.@IsEmail()
+  /// @Validator.MinLength(8)
+  email           String @unique
+  /// @HideField()
+  password        String
+  /// @HideField({ input: true, output: true })
+  hashedRefreshToken String?
+  /// @HideField({ input: true, output: true })
+  createdAt       DateTime  @default(now())
+  /// @HideField({ input: true, output: true })
+  updatedAt       DateTime  @updatedAt
+}
+
+model Inventory {
+  id              String @id @default(uuid())
+  name            String @unique
+  type            String
+  inventoryItems  Int
+  requiredItems   Int
+  price           Int
+  status          String
+  orderCode       String @unique
+  orderDates      DateTime?
+  thumbNailUrl    String?
+  order           Order?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model Order {
+  id              String @id @default(uuid())
+  inventory       Inventory @relation(fields: [inventoryId], references: [id])
+  inventoryId     String
+  sendAdress      String @db.VarChar(100)
+  type            String @db.VarChar(100)
+  title           String @db.VarChar(100)
+  mailContent     String @db.VarChar(1000)
+  sendCc          String @db.VarChar(100)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}

@@ -1,0 +1,68 @@
+fragment Inventory on InventoryModel {
+  id
+  name
+  type
+  inventoryItems
+  requiredItems
+  price
+  status
+  orderCode
+  orderDates
+  thumbNailUrl
+}
+
+fragment Order on OrderModel {
+  id
+  inventoryId
+  sendAdress
+  type
+  title
+  mailContent
+  sendCc
+}
+
+query GetInventory {
+  inventories {
+    ...Inventory
+  }
+  orders {
+    ...Order
+  }
+}
+query GetInventoryCard {
+  inventories {
+    ...Inventory
+  }
+}
+
+query InventoryDetailPage($name: String) {
+  inventory: findInventory(name: $name) {
+    ...Inventory
+    order {
+      ...Order
+    }
+  }
+}
+
+mutation CreateInventory($input: InventoryCreateInput!){
+  createInventory(input: $input){
+    name
+  }
+}
+
+mutation UpdateInventory($where: InventoryWhereInput!,$data: InventoryUpdateInput!){
+  updateInventory(where: $where, data: $data){
+    id
+    name
+    inventoryItems
+    requiredItems
+    updatedAt
+  }
+}
+mutation UpdateItemsInventory($where: InventoryWhereInput!,$data: InventoryUpdateInput!){
+  updateInventory(where: $where, data: $data){
+    inventoryItems
+    requiredItems
+    updatedAt
+  }
+}
